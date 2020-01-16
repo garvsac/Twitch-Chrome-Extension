@@ -1,1 +1,1 @@
-# Twitch-Notification-Extension-
+# Twitch-Notification-Extension
