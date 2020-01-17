@@ -1,6 +1,5 @@
 javascript:(
 	function(){
-		
 		let name = document.getElementsByClassName('text-fragment');
 		let emote = document.getElementsByClassName('chat-image');
 		let x;
