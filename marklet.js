@@ -17,17 +17,5 @@ function nodeInsertedCallback(event) {
 
 
 };
-//shift this to bg script
-document.addEventListener('DOMNodeInserted', nodeInsertedCallback);
 
-fetch('https://api.twitch.tv/helix/streams?user_login=justcooman', {
-    headers: {
-        'client-id': 'wkx1l5vtmsi33feoavz1xu0q17861g'
-    }
-}).then(resp => {
-    return resp.json()
-}).then(resp => {
-    console.log(resp)
-}).catch(err => {
-    console.log(err)
-});
+document.addEventListener('DOMNodeInserted', nodeInsertedCallback);

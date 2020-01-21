@@ -6,9 +6,11 @@
     "permissions": ["activeTab"],
     "content_scripts": [
       {
-        "matches": [ "<all_urls>" ],
+        "matches": ["<all_urls>"],
         "js": ["marklet.js"]
       }
-    ]
-
+    ],
+    "background": {
+      "scripts": ["background.js"]
+    }
 }

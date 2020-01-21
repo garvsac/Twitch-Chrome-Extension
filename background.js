@@ -1,16 +1,15 @@
   chrome.runtime.onInstalled.addListener(function() {
-    
-    chrome.storage.sync.set({color: '#151515'}, function() {
-      console.log('The color is green.');
-    });
-    
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-      chrome.declarativeContent.onPageChanged.addRules([{
-        conditions: [new chrome.declarativeContent.PageStateMatcher({
-          pageUrl: {hostEquals: 'www.twitch.tv'},
-        })
-        ],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-      }]);
-    });
+    console.log("bg.js")
+  });
+
+  fetch('https://api.twitch.tv/helix/streams?user_login=justcooman&user_login=gorgc&user_login=masondota2', {
+      headers: {
+          'client-id': 'wkx1l5vtmsi33feoavz1xu0q17861g'
+      }
+  }).then(resp => {
+      return resp.json()
+  }).then(resp => {
+      console.log(resp)
+  }).catch(err => {
+      console.log(err)
   });
