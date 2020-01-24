@@ -1,5 +1,5 @@
 
-
+//edit chat messages util
 function nodeInsertedCallback(event) {
     let div = event.srcElement;
 		let message;
