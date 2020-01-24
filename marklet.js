@@ -5,7 +5,6 @@ function nodeInsertedCallback(event) {
 		let message;
 		if(div.className =="chat-line__message")
 		{
-			//	console.log(div);
 			message = div.getElementsByClassName('text-fragment');
 			image = div.getElementsByClassName('chat-image');
 			for (let y = 0; y < image.length; y++) {
