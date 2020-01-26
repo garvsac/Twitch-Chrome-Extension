@@ -9,18 +9,20 @@ userID_api = "https://api.twitch.tv/helix/users?login=";
 streamdata_api = "https://api.twitch.tv/helix/streams?user_login=";
 //fetch( url , {method: "POST", body: JSON.stringify(resp[0])});
 
+
 function getID(username) {
   let answer =  fetch( userID_api + username, { headers: { 'client-id': clientid}})
   .then(resp => resp.json())
   .then(val => {
+    console.log(val.data[0])
     return val.data[0].id;
   })
   return answer;
 }
 
 async function getFollows(username) {
-  let userID = await getID(username);
-  let answer =  fetch( follows_api + userID, { headers: { 'client-id': clientid}})
+  let user = await getID(username);
+  let answer =  fetch( follows_api + user, { headers: { 'client-id': clientid}})
   //not all follows returned use cursor fix
   .then(resp => resp.json())
   .then(channels => {
@@ -43,7 +45,7 @@ async function getFollowsStatus(username){
     x =  await fetch( streamdata_api + channel, { headers: { 'client-id': clientid }})
     .then(resp => resp.json())
     .then(resp => resp.data);
-    console.log(x)
+    //console.log(x)
     if(x.length>0)
     {
       answer[i] = x[0];
@@ -53,10 +55,13 @@ async function getFollowsStatus(username){
   return answer;
 }
 //fetch( url , {method: "POST", body: JSON.stringify(getFollows("gorgc"))});
-getFollowsStatus("shroud")
+getFollowsStatus("gorgc")
 .then(resp => {
-  console.log("end")
+  //console.log("end")
   console.log(resp);
-
+  chrome.runtime.sendMessage({
+    msg: "fetch completed",
+    data: resp
+});
 })
 .catch( err => console.log (err));
