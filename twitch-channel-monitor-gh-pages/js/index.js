@@ -1,4 +1,5 @@
-var myUsers = ["Summit1g", "Tfue", "gorgc", "justcooman"];
+
+//["lirik", "Tfue", "gorgc", "justcooman"];
 var userData = [];
 var htmlOffline = "";
 var htmlOnline = "";
@@ -6,7 +7,36 @@ var htmlInactive = "";
 var count = 0;
 var inactiveUsers = [];
 clientid = "wkx1l5vtmsi33feoavz1xu0q17861g";
+var myUsers = ["gorgc", "lirik", "Taiga_", "moonduckTV", "KheZu", "BigDaddy", "masondota2", "illidanstr"];
 
+
+function getID(username) {
+  userID_api = "https://api.twitch.tv/helix/users?login=";
+  let answer =  fetch( userID_api + username, { headers: { 'client-id': clientid}})
+  .then(resp => resp.json())
+  .then(val => {
+    console.log(val.data[0])
+    return val.data[0].id;
+  })
+  return answer;
+}
+
+async function getFollows(username) {
+  let user = await getID(username);
+  follows_api = "https://api.twitch.tv/helix/users/follows?from_id=";
+  let answer =  fetch( follows_api + user, { headers: { 'client-id': clientid}})
+  //not all follows returned use cursor fix
+  .then(resp => resp.json())
+  .then(channels => {
+    data = channels.data
+    for ( var i = 0; i < data.length; i++)
+      {
+        data[i] = data[i].to_name
+      }
+    return data;
+  })
+  return answer;
+}
 
 function doSearch() {
   $(".groups").hide();
@@ -17,11 +47,17 @@ function doSearch() {
   .then(resp=>resp.json())
   .then(
     data => {
-      console.log(data);
-      console.log(username);
       if (data.data.length != 0) {
-        //append stream mini player
-        htmlSearch = "<div><a href='https://twitch.tv/" + username + "' target='_blank'><span class='picture'><img src='" + (data.logo == null ? "images/placeholder.png" : data.logo) + "'></span><span class='name'>" + data.data[0].user_name + "</span></a><span class='status'><!-- offline --></span><i class='material-icons add-search'>add</i></div>"
+        htmlSearch =  "<div>"+
+                      "<a href='https://twitch.tv/" + username + "' target='_blank'>"+
+                      "<span class='picture'>"+
+                      "<img src='" + (data.logo == null ? "images/placeholder.png" : data.logo) + "'>"+
+                      "</span>"+
+                      "<span class='name'>" + data.data[0].user_name + "</span>"+
+                      "</a>"+
+                      "<span class='status' style='color:red;padding-right:20px;float:right;'><img src='images/live.svg' width='25'  style='padding-right:0px;padding-left:0px;'>"+ data.data[0].viewer_count +"</span>"+
+                      "</div>"
+        htmlSearch += '<iframe src="https://player.twitch.tv/?channel=' + username + '" frameborder="0" allowfullscreen="true" scrolling="no" height="250" width="100%"></iframe>'
         $(".search-container").html(htmlSearch);
         $(".search-title > h2").html("Search Results");
         $(".search-container").show();
@@ -29,7 +65,7 @@ function doSearch() {
 
       } else {
       $(".search-container").hide();
-      $(".search-title > h2").html(username[0].toUpperCase() + username.substr(1) + " Not Found.")
+      $(".search-title > h2").html(username[0].toUpperCase() + username.substr(1) + " is not Live.")
       $(".search-group").show();
       };
       $(".search-span > input").val("");
@@ -133,13 +169,16 @@ function renderList(str) { // This function merely
 
 }
 
+
 function getNamePhoto(username) {
   userID_api = "https://api.twitch.tv/helix/users?login=";
   let answer =  fetch( userID_api + username, { headers: { 'client-id': clientid}})
   .then(resp => resp.json())
   .then(val => {
     return [val.data[0].display_name, val.data[0].profile_image_url];
-  })
+  }).catch(function(err) {
+            console.log(err);
+        });
   return answer;
 }
 
@@ -167,7 +206,7 @@ function populateList(searchQuery) { // This function grabs the data from
       .then(resp => resp.json())
       .then(
         data => {
-          console.log(data.data)
+          //console.log(data.data[0])
           getNamePhoto(username).then( nameandlink =>
               {
                 name = nameandlink[0]
@@ -182,14 +221,21 @@ function populateList(searchQuery) { // This function grabs the data from
                   userData.push(data);
                 } else { // Else, add the user to the online list.
                   userData.push(data);
-                  htmlOnline += "<div><a href='https://twitch.tv/" + username + "' target='_blank'><span class='picture'><img src='" + link + "'></span><span class='name'>" + name + "</span></a><span class='status'><a href='https://twitch.tv/" + username + "' target='_blank'>" + channel.viewer_count + "</a></span></div>"
+
+                  htmlOnline += "<div>"+
+                                "<a href='https://twitch.tv/" + username + "' target='_blank'>"+
+                                "<span class='picture'><img src='" + link + "'></span>"+
+                                "<span class='name'>" + name +  "</span>"+
+                                "</a>"+
+                                "<span class='status' style='color:red;padding-right: 20px;float:right;'><img src='images/live.svg' width='25'  style='padding-right:0px;padding-left:0px;'>"+ channel.viewer_count +"</span>"+
+                                "</div>"
                   count++;
                   if (count == list.length) {
                     renderList($(".active").text());
                   };
                 }
               }
-            )
+            ).catch(x=>console.log(x))
           }
         )
     });
@@ -197,6 +243,7 @@ function populateList(searchQuery) { // This function grabs the data from
 }
 
 $(document).ready(function() {
+  //myUsers = getFollows("gorgc").then(resp=>{console.log(resp);});
   populateList();
   $(".add-new-btn").hover(function() {
     $(".tool-tip, .tool-tip-tri").css({

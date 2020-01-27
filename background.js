@@ -55,7 +55,7 @@ async function getFollowsStatus(username){
   return answer;
 }
 //fetch( url , {method: "POST", body: JSON.stringify(getFollows("gorgc"))});
-getFollowsStatus("gorgc")
+/* getFollowsStatus("gorgc")
 .then(resp => {
   //console.log("end")
   console.log(resp);
@@ -64,4 +64,4 @@ getFollowsStatus("gorgc")
     data: resp
 });
 })
-.catch( err => console.log (err));
+.catch( err => console.log (err)); */
